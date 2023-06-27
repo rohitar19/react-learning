@@ -6,32 +6,67 @@ class App extends Component {
   
   state={
     person:[
-      { name: 'Rohit' , age :23} ,
-      { name: 'shine' , age:22 }
+      { id:'FFGG1' , name: 'Rohit' , age :23} ,
+      { id :'RRSS1' ,name: 'shine' , age:22 }
     ]
 
   }
 
-   switchNameHandler = (newName) => {
-      // console.log('was clicked!');
-      // this.state.person[0].name='rohitarya'; DONOT DO THIS APPORACH
+  //  switchNameHandler = (newName) => {
+  //     // console.log('was clicked!');
+  //     // this.state.person[0].name='rohitarya'; DONOT DO THIS APPORACH
      
-      this.setState({
-        person:[
-          { name:  newName , age :23} ,
-          { name: 'shine-Arya' , age:22 }
-        ]
-      })
+  //     this.setState({
+  //       person:[
+  //         { name:  newName , age :23} ,
+  //         { name: 'shine-Arya' , age:22 }
+  //       ] ,
+  //       otherState : 'some other state' ,
+  //       showPerson: false 
+  //     })
 
+  //  }
+
+   nameChangedHandler = (event , id) => {
+    
+     const personIndex = this.state.person.findIndex( p => {
+      return p.id===id;
+     });
+
+     const persons ={
+      ...this.state.person[personIndex]
+     };
+
+     // const person = Object.assign({} , this.state.person[personIndex]);
+     //now update the name 
+
+     persons.name = event.target.value;
+
+     const person = [...this.state.person];
+     person[personIndex] = persons;
+     
+    this.setState({ person: person })
    }
 
-   nameChangedHandler = (event) => {
-    this.setState({
-      person:[
-        { name:  'Rohit' , age :23} ,
-        { name:   event.target.value , age:22 }
-      ]
-    })
+   toggleNameHandler = () => {
+
+    const doesShow =  this.state.showPerson;
+    this.setState({ showPerson : !doesShow});
+       
+   }
+  // 6. splice basically remove one element from the array
+  // 7. this methode has flaw bcz here we are given reference to the
+  //original dataset ; we always have to make copy of the original data set 
+  //so we have to use " slice()" this methode without argument simply copy
+  //the array of original dataset;
+   deletePersonHandler = (personIndex) => {  
+
+    // const person = this.state.person.slice();
+    // ... is a spread operator which make a list of array 
+      const person = [...this.state.person];
+      person.splice(personIndex , 1);
+      this.setState({person : person})
+            
    }
 
 
@@ -44,33 +79,53 @@ class App extends Component {
       cursor : 'pointer'
     };
 
+      let person = null;
+      // 4.note: for convert array javascript to a valid jsx use map() methode
+       // 5.this is basically list of all person  
+       // 8.we should assign a "key prop" which make a track of which element
+       //is updated , and re-render only that element not the whole list again
+       //key = { unique elment} in database we have primary key , here we are using 
+       // index bcz for every element their is different key
+       //but index is also part of list i list changes every element get new
+       //index , so we have to assign id in state.
+      if(this.state.showPerson){
+        person = (
+          <div>
+            {this.state.person.map((person , index) => {
+               return <Person 
+               click={() => this.deletePersonHandler(index)}
+               name ={person.name}
+               age = {person.age}
+               key = {person.id}
+               changed={ (event) => this.nameChangedHandler(event , person.id)} />  
+            })}
+
+
+          {/* <Person 
+           name = {this.state.person[0].name} 
+           age={this.state.person[0].age} 
+           click={this.switchNameHandler.bind(this , 'Rohit-Arya')}>
+             my hobbies is playing cricket</Person>
+         <Person 
+           name = {this.state.person[1].name} 
+           age={this.state.person[1].age}
+           changed={this.nameChangedHandler} /> */}
+        
+          </div>
+        );
+      }
 
 
   return (
     <div className="App">
       <h1>HI , i am rohit app</h1>
       <p>This is really working</p>
-      {/* <Person name="ROhit" age ="23"> my hobbies is playing cricket</Person>
-      <Person name = "shine" age= "22"></Person> */}
-
-      {/* donot use parenthethis at the end of switchNameHandler() like this , it immediate call the methode but we have give reference. */}
-       
-      {/* //this methode can be ineffcient use bind methode instead */}
-
        <button 
        style={style}
-       onClick={ () => this.switchNameHandler('ROhit')}>Switch Name</button>  
-      <Person 
-        name = {this.state.person[0].name} 
-        age={this.state.person[0].age} 
-        click={this.switchNameHandler.bind(this , 'Rohit-Arya')}>
-          my hobbies is playing cricket</Person>
-      <Person 
-        name = {this.state.person[1].name} 
-        age={this.state.person[1].age}
-        changed={this.nameChangedHandler} />
-     
-      
+       onClick={this.toggleNameHandler}>Toggle Person
+       </button>   
+       {person}
+
     </div>
   );
 
@@ -79,6 +134,21 @@ class App extends Component {
 }
 
 export default App;
+{/* <Person name="ROhit" age ="23"> my hobbies is playing cricket</Person>
+      <Person name = "shine" age= "22"></Person> */}
+
+      {/* donot use parenthethis at the end of switchNameHandler() like this , it immediate call the methode but we have give reference. */}
+       
+      {/* //this methode can be ineffcient use bind methode instead */}
+      
+     {/* //inside the curly braces bcz we have act as javascrit code
+      //and also we cannot  use block statement like if else inside {} these curly braces so use tenary oprator
+         */}
+
+     //till now we are using static data but in realworld there in no static data
+     //we have fetch data from server so we have learn no how to use dyanamic data
+
+
 
 // -----FUCTION BASED COMPONENT--------
 
