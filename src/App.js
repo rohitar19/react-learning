@@ -1,6 +1,23 @@
 import React ,  { Component } from 'react';
+
+import styled from 'styled-components' ;
+
 import './App.css';
+// import Radium , {StyleRoot} from 'radium';
 import Person from './Person/Person';
+
+const StyledButton = styled.button`
+background-color: ${props => props.alt ? 'red' : 'green' };
+color : white;
+font : inherit ;
+border : 1px solid blue ;
+padding : 8px ;
+cursor : pointer;
+&:hover {
+  background-color: ${props => props.alt ? 'blue' : 'brown' };
+  color : black;
+
+`;
 
 class App extends Component {
   
@@ -69,15 +86,30 @@ class App extends Component {
             
    }
 
+  // 9. we cant apply sudo selector in inline css
+  //12. for use hover and sudo property in inline which
+  // not by defaut possible , add radium package using 
+  // npm install --save radium
+  // if you got dependency error while installing package
+  //then use at the end --legacy-peer-deps 
+
+  //12. install styled-components package , and remove all
+  //the radium traces for using normal css 
 
   render(){
     const style = {
-      backgroundColor: 'white',
+      backgroundColor: 'green',
+      color : 'white',
       font : 'inherit' ,
       border : '1px solid blue' ,
       padding : '8px' ,
-      cursor : 'pointer'
-    };
+      cursor : 'pointer',
+      ':hover' :{
+        backgroundColor: 'lightgreen',
+        color : 'black'
+      }
+    }; // instead of this now we are using styled-component package 
+    //where we can use normal css rule;
 
       let person = null;
       // 4.note: for convert array javascript to a valid jsx use map() methode
@@ -99,8 +131,6 @@ class App extends Component {
                key = {person.id}
                changed={ (event) => this.nameChangedHandler(event , person.id)} />  
             })}
-
-
           {/* <Person 
            name = {this.state.person[0].name} 
            age={this.state.person[0].age} 
@@ -113,27 +143,49 @@ class App extends Component {
         
           </div>
         );
+         
+        //  style.backgroundColor = 'red';
+        //  style[':hover'] = {
+        //   backgroundColor: 'blue',
+        //   color : 'white'
+        // } //13. we are going use this in styled component itself
+      }
+      // 10. this will just turn array of string into one string //as "red bold"
+      //  let classes = ['red' , 'bold'].join(' '); 
+
+      const classes =[];
+      if(this.state.person.length <= 2){
+        classes.push('red'); // classes = ['red']
       }
 
-
+      if(this.state.person.length <= 1){
+        classes.push('bold'); // classes = ['red' , 'bold']
+      }
+    //11.classes in an array now so we have to pass the string
+    // so inside return use classes.join(' ') which will it one string
   return (
-    <div className="App">
+   
+       <div className="App">
       <h1>HI , i am rohit app</h1>
-      <p>This is really working</p>
-       <button 
-       style={style}
-       onClick={this.toggleNameHandler}>Toggle Person
-       </button>   
+      <p className={classes.join(' ')}>This is really working</p>
+       <StyledButton 
+      //  style={style}
+      alt = {this.state.showPerson}
+       onClick={this.toggleNameHandler}>
+       Toggle Person
+       </StyledButton>  
        {person}
 
     </div>
+    
+   
   );
 
   // return React.createElement('div' , {className: 'App'} , createElement('h1' , null , 'does this work?'));
 }
 }
-
-export default App;
+ export default App;
+// export default Radium(App); //higher order component
 {/* <Person name="ROhit" age ="23"> my hobbies is playing cricket</Person>
       <Person name = "shine" age= "22"></Person> */}
 
